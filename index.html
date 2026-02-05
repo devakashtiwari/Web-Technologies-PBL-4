@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accessibility Demo - ARIA Roles & Semantic HTML</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #e74c3c;
+            --accent: #3498db;
+            --light-bg: #ecf0f1;
+            --text-dark: #2c3e50;
+            --text-light: #7f8c8d;
+            --border: #bdc3c7;
+            --success: #27ae60;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            color: var(--text-dark);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        /* Header with banner role */
+        header[role="banner"] {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header[role="banner"]::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+            letter-spacing: -1px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.95;
+            position: relative;
+            z-index: 1;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Navigation with nav role */
+        nav[role="navigation"] {
+            background: var(--light-bg);
+            padding: 20px 40px;
+            border-bottom: 2px solid var(--border);
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        nav a:hover,
+        nav a:focus {
+            background: var(--accent);
+            color: white;
+            outline: none;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: width 0.3s ease;
+        }
+
+        nav a:hover::after,
+        nav a:focus::after {
+            width: 100%;
+        }
+
+        /* Main content */
+        main[role="main"] {
+            padding: 60px 40px;
+        }
+
+        .section {
+            margin-bottom: 60px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        h2 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        h2 code {
+            background: var(--light-bg);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            color: var(--secondary);
+        }
+
+        h3 {
+            font-size: 1.4em;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: var(--text-light);
+            font-size: 1.05em;
+        }
+
+        /* Landmark regions */
+        .landmark-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .landmark-card {
+            background: linear-gradient(135deg, #ffffff 0%, var(--light-bg) 100%);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .landmark-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-color: var(--accent);
+        }
+
+        .landmark-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--secondary));
+        }
+
+        .landmark-card h4 {
+            color: var(--primary);
+            margin-top: 10px;
+            margin-bottom: 12px;
+            font-size: 1.2em;
+        }
+
+        .landmark-card code {
+            background: var(--primary);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+
+        .landmark-card p {
+            font-size: 0.95em;
+            color: var(--text-light);
+        }
+
+        /* Interactive examples */
+        .example-box {
+            background: var(--light-bg);
+            border-left: 4px solid var(--accent);
+            padding: 25px;
+            border-radius: 6px;
+            margin: 25px 0;
+        }
+
+        .example-box h4 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Form with fieldset */
+        fieldset {
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            padding: 25px;
+            margin: 25px 0;
+            background: var(--light-bg);
+        }
+
+        legend {
+            padding: 0 15px;
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 1.1em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1em;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+
+        button:focus {
+            outline: 3px solid var(--secondary);
+            outline-offset: 2px;
+        }
+
+        /* Alert regions */
+        .alert {
+            padding: 20px;
+            border-radius: 6px;
+            margin: 20px 0;
+            border-left: 4px solid;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border-left-color: var(--success);
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+            border-left-color: #ffc107;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border-left-color: var(--secondary);
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border-left-color: var(--accent);
+        }
+
+        /* List examples */
+        ul, ol {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        /* Tablist */
+        .tablist {
+            display: flex;
+            border-bottom: 2px solid var(--border);
+            margin-bottom: 25px;
+            gap: 5px;
+        }
+
+        [role="tab"] {
+            padding: 15px 25px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            color: var(--text-light);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        [role="tab"]:hover {
+            color: var(--primary);
+            background: var(--light-bg);
+        }
+
+        [role="tab"][aria-selected="true"] {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        [role="tabpanel"] {
+            display: none;
+            padding: 25px;
+            background: var(--light-bg);
+            border-radius: 6px;
+        }
+
+        [role="tabpanel"][aria-hidden="false"] {
+            display: block;
+        }
+
+        /* Skip link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--secondary);
+            color: white;
+            padding: 8px;
+            z-index: 100;
+            text-decoration: none;
+            border-radius: 0 0 4px 0;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Footer */
+        footer[role="contentinfo"] {
+            background: var(--primary);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            border-top: 4px solid var(--accent);
+        }
+
+        footer p {
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 10px;
+        }
+
+        /* Accessibility status */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* Code display */
+        code {
+            font-family: 'Courier New', monospace;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            nav[role="navigation"] {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            main[role="main"] {
+                padding: 30px 20px;
+            }
+
+            .landmark-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Skip to main content link for keyboard users -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <div class="container">
+        <!-- Banner landmark -->
+        <header role="banner">
+            <h1>Web Accessibility Guide</h1>
+            <p>Implementing ARIA roles and semantic HTML for inclusive web design</p>
+        </header>
+
+        <!-- Navigation landmark -->
+        <nav role="navigation" aria-label="Main navigation">
+            <a href="#landmarks">Landmarks</a>
+            <a href="#interactive">Interactive</a>
+            <a href="#forms">Forms</a>
+            <a href="#alerts">Alerts</a>
+            <a href="#tabs">Tabs</a>
+        </nav>
+
+        <!-- Main content landmark -->
+        <main role="main" id="main-content">
+
+            <!-- ARIA Landmarks Section -->
+            <section id="landmarks" class="section">
+                <h2>🎯 ARIA Landmarks & Roles</h2>
+                <p>ARIA landmarks help screen reader users navigate and understand page structure. They provide shortcuts to major page regions and make content organization clear.</p>
+
+                <div class="landmark-grid">
+                    <div class="landmark-card">
+                        <h4><code>role="banner"</code></h4>
+                        <p>Contains site-wide header, branding, and top-level navigation. Typically the page header.</p>
+                    </div>
+
+                    <div class="landmark-card">
+                        <h4><code>role="navigation"</code></h4>
+                        <p>Groups navigation links. Use <code>aria-label</code> to distinguish multiple nav regions (main, secondary, social).</p>
+                    </div>
+
+                    <div class="landmark-card">
+                        <h4><code>role="main"</code></h4>
+                        <p>Identifies the main content area. Only one per page. Helps users skip to primary content.</p>
+                    </div>
+
+                    <div class="landmark-card">
+                        <h4><code>role="complementary"</code></h4>
+                        <p>Sidebar or supplementary content that supports the main content but can be read independently.</p>
+                    </div>
+
+                    <div class="landmark-card">
+                        <h4><code>role="contentinfo"</code></h4>
+                        <p>Footer with copyright, links, and site-wide information. Use in <code>&lt;footer&gt;</code> elements.</p>
+                    </div>
+
+                    <div class="landmark-card">
+                        <h4><code>role="search"</code></h4>
+                        <p>Identifies search functionality. Helps users quickly find the search feature.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Interactive Elements Section -->
+            <section id="interactive" class="section">
+                <h2>⚙️ Interactive Components</h2>
+
+                <h3>Buttons & Links</h3>
+                <div class="example-box">
+                    <h4>✓ Semantic Buttons</h4>
+                    <p>Always use proper <code>&lt;button&gt;</code> elements for actions, not styled <code>&lt;div&gt;</code> elements. Buttons are automatically keyboard accessible.</p>
+                    <button>Click Me - I'm Accessible!</button>
+                </div>
+
+                <h3>Tab Component</h3>
+                <div class="example-box">
+                    <h4>✓ ARIA Tab Interface</h4>
+                    <p>This tablist uses proper ARIA roles for screen reader users to understand tab structure:</p>
+
+                    <div role="tablist" class="tablist" aria-label="Content sections">
+                        <button role="tab" aria-selected="true" aria-controls="panel-1" id="tab-1">Overview</button>
+                        <button role="tab" aria-selected="false" aria-controls="panel-2" id="tab-2">Details</button>
+                        <button role="tab" aria-selected="false" aria-controls="panel-3" id="tab-3">Resources</button>
+                    </div>
+
+                    <div role="tabpanel" id="panel-1" aria-labelledby="tab-1" aria-hidden="false">
+                        <p><strong>Overview Tab:</strong> This panel provides a general introduction to the topic. The tab interface uses ARIA attributes to connect tabs to their panels.</p>
+                    </div>
+
+                    <div role="tabpanel" id="panel-2" aria-labelledby="tab-2" aria-hidden="true">
+                        <p><strong>Details Tab:</strong> This contains more detailed information. Notice the <code>aria-selected</code>, <code>aria-controls</code>, and <code>aria-hidden</code> attributes.</p>
+                    </div>
+
+                    <div role="tabpanel" id="panel-3" aria-labelledby="tab-3" aria-hidden="true">
+                        <p><strong>Resources Tab:</strong> Links to additional learning materials and documentation for accessibility best practices.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Forms Section -->
+            <section id="forms" class="section">
+                <h2>📝 Accessible Forms</h2>
+                <p>Forms should always have associated labels, proper grouping with fieldsets, and clear error messaging.</p>
+
+                <fieldset>
+                    <legend>Feedback Form</legend>
+
+                    <div class="form-group">
+                        <label for="feedback-name">Name <span aria-label="required">*</span></label>
+                        <input type="text" id="feedback-name" name="name" required aria-required="true" aria-describedby="name-help">
+                        <small id="name-help" style="color: var(--text-light);">Enter your full name</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="feedback-email">Email <span aria-label="required">*</span></label>
+                        <input type="email" id="feedback-email" name="email" required aria-required="true">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="feedback-message">Message <span aria-label="required">*</span></label>
+                        <textarea id="feedback-message" name="message" rows="5" required aria-required="true" aria-describedby="message-help"></textarea>
+                        <small id="message-help" style="color: var(--text-light);">Please provide your feedback or question</small>
+                    </div>
+
+                    <button type="submit">Submit Feedback</button>
+                </fieldset>
+            </section>
+
+            <!-- Alert Messages Section -->
+            <section id="alerts" class="section">
+                <h2>🔔 Alert Regions</h2>
+                <p>Use <code>role="alert"</code> for time-sensitive information that screen reader users should be notified of immediately.</p>
+
+                <div role="alert" class="alert alert-success">
+                    <strong>✓ Success!</strong> Your changes have been saved successfully. The form is now up to date.
+                </div>
+
+                <div role="alert" aria-live="polite" class="alert alert-info">
+                    <strong>ℹ Information:</strong> This is a polite alert that won't interrupt screen readers. Good for non-urgent updates.
+                </div>
+
+                <div role="alert" aria-live="assertive" class="alert alert-warning">
+                    <strong>⚠ Warning:</strong> This action cannot be undone. Please review before proceeding.
+                </div>
+
+                <div role="alert" aria-live="assertive" class="alert alert-error">
+                    <strong>✕ Error:</strong> There was a problem processing your request. Please try again or contact support.
+                </div>
+            </section>
+
+            <!-- Lists Section -->
+            <section id="lists" class="section">
+                <h2>📋 Semantic Lists</h2>
+
+                <h3>Unordered List Example</h3>
+                <ul>
+                    <li>Always use semantic HTML elements (<code>&lt;ul&gt;</code>, <code>&lt;ol&gt;</code>, <code>&lt;li&gt;</code>)</li>
+                    <li>Screen readers announce list structure and item count</li>
+                    <li>Provides navigation shortcuts for list content</li>
+                    <li>Never use <code>&lt;div&gt;</code> elements to create fake lists</li>
+                </ul>
+
+                <h3>Ordered List Example</h3>
+                <ol>
+                    <li>Start with semantic HTML - it's the foundation</li>
+                    <li>Add ARIA only when semantic HTML isn't sufficient</li>
+                    <li>Test with real assistive technologies</li>
+                    <li>Validate your code against WCAG guidelines</li>
+                </ol>
+            </section>
+
+            <!-- ARIA Live Regions -->
+            <section id="live-regions" class="section">
+                <h2>📡 Live Regions</h2>
+                <div class="example-box">
+                    <h4>Real-time Updates</h4>
+                    <p><code>aria-live</code> attributes announce dynamic content changes:</p>
+                    <ul>
+                        <li><code>aria-live="polite"</code> - Waits for screen reader to finish before announcing (default)</li>
+                        <li><code>aria-live="assertive"</code> - Interrupts to announce immediately (use sparingly)</li>
+                        <li><code>aria-live="off"</code> - No automatic announcement</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- Best Practices -->
+            <section id="best-practices" class="section">
+                <h2>✅ Accessibility Best Practices</h2>
+                <div class="example-box">
+                    <h4>Core Principles</h4>
+                    <ol>
+                        <li><strong>Use Semantic HTML First:</strong> <code>&lt;button&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code> instead of custom widgets</li>
+                        <li><strong>Proper Heading Structure:</strong> Start with h1, skip levels logically (h1 → h2 → h3)</li>
+                        <li><strong>Color Contrast:</strong> Minimum 4.5:1 for normal text, 3:1 for large text (WCAG AA)</li>
+                        <li><strong>Keyboard Navigation:</strong> All functionality accessible via keyboard</li>
+                        <li><strong>Focus Indicators:</strong> Visible focus states for keyboard users</li>
+                        <li><strong>Alternative Text:</strong> Meaningful descriptions for images and icons</li>
+                        <li><strong>Avoid Auto-play:</strong> Media shouldn't play without user action</li>
+                        <li><strong>Test with Real Users:</strong> Include people with disabilities in testing</li>
+                    </ol>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Footer with contentinfo role -->
+    <footer role="contentinfo">
+        <p>&copy; 2025 Web Accessibility Guide. Built with WCAG guidelines in mind.</p>
+        <p>For more information, visit <a href="https://www.w3.org/WAI/" style="color: var(--accent); text-decoration: underline;">W3C Web Accessibility Initiative</a></p>
+    </footer>
+
+    <script>
+        // Tab component functionality
+        const tabs = document.querySelectorAll('[role="tab"]');
+        const tabPanels = document.querySelectorAll('[role="tabpanel"]');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active state from all tabs
+                tabs.forEach(t => {
+                    t.setAttribute('aria-selected', 'false');
+                });
+                tabPanels.forEach(panel => {
+                    panel.setAttribute('aria-hidden', 'true');
+                });
+
+                // Set active tab
+                this.setAttribute('aria-selected', 'true');
+                const panelId = this.getAttribute('aria-controls');
+                document.getElementById(panelId).setAttribute('aria-hidden', 'false');
+            });
+
+            // Keyboard support for tabs
+            tab.addEventListener('keydown', (e) => {
+                let newTab;
+                if (e.key === 'ArrowRight') {
+                    const currentIndex = Array.from(tabs).indexOf(this);
+                    newTab = tabs[(currentIndex + 1) % tabs.length];
+                } else if (e.key === 'ArrowLeft') {
+                    const currentIndex = Array.from(tabs).indexOf(this);
+                    newTab = tabs[(currentIndex - 1 + tabs.length) % tabs.length];
+                } else if (e.key === 'Home') {
+                    newTab = tabs[0];
+                } else if (e.key === 'End') {
+                    newTab = tabs[tabs.length - 1];
+                }
+
+                if (newTab) {
+                    e.preventDefault();
+                    newTab.click();
+                    newTab.focus();
+                }
+            });
+        });
+
+        // Form submission with accessible feedback
+        const form = document.querySelector('fieldset');
+        if (form) {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const successAlert = document.createElement('div');
+                successAlert.setAttribute('role', 'alert');
+                successAlert.className = 'alert alert-success';
+                successAlert.innerHTML = '<strong>✓ Form Submitted!</strong> Thank you for your feedback. Your message has been received.';
+                form.parentNode.insertBefore(successAlert, form);
+
+                // Scroll to alert
+                successAlert.focus();
+                successAlert.scrollIntoView({ behavior: 'smooth' });
+            });
+        }
+    </script>
+</body>
+</html>
